@@ -1,13 +1,14 @@
 #include <filesystem>
-#include "GameData.h"
-#include "GameAPI.h"
-#include "GameRTTI.h"
 #include "utility.h"
 #include "commands_animation.h"
 #include "file_animations.h"
 #include "json.h"
 #include <fstream>
 #include <utility>
+
+#include "GameData.h"
+#include "GameAPI.h"
+#include "GameRTTI.h"
 
 void LoadPathsForList(const BGSListForm* listForm, const std::filesystem::path& path, bool firstPerson);
 

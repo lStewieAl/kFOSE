@@ -5,9 +5,10 @@
 #include "utility.h"
 #include <filesystem>
 #include "file_animations.h"
+#include "SafeWrite.h"
+
 #include "GameData.h"
 #include "GameRTTI.h"
-#include "SafeWrite.h"
 #define RegisterScriptCommand(name) 	nvse->RegisterCommand(&kCommandInfo_ ##name);
 
 IDebugLog		gLog("kNVSE.log");

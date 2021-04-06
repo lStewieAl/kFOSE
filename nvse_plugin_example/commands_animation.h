@@ -1,9 +1,6 @@
 #pragma once
-
-#include "CommandTable.h"
-#include "GameForms.h"
 #include "GameObjects.h"
-#include "GameProcess.h"
+
 #include "ParamInfos.h"
 
 struct SavedAnims

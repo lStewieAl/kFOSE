@@ -1,6 +1,6 @@
-#include "hooks.h"
 #include "GameProcess.h"
 #include "GameObjects.h"
+
 #include "commands_animation.h"
 #include "SafeWrite.h"
 #include "utility.h"
