@@ -5,7 +5,7 @@
 #include "SafeWrite.h"
 #include "utility.h"
 
-void __fastcall HandleAnimationChange(AnimData* animData, UInt32 animGroupId, BSAnimGroupSequence** toMorph)
+BSAnimGroupSequence* __fastcall HandleAnimationChange(AnimData* animData, void* edx, BSAnimGroupSequence* toMorph, UInt32 animGroupId, UInt32 sequenceId)
 {
 	if (animData && animData->actor)
 	{
@@ -17,39 +17,25 @@ void __fastcall HandleAnimationChange(AnimData* animData, UInt32 animGroupId, BS
 			if (auto* anim = GetWeaponAnimation(weaponInfo->weapon, animGroupId, firstPerson, animData))
 			{
 				anim->animGroup->groupID = animGroupId;
-				*toMorph = anim;
-				return;
+				toMorph = anim;
+				return GameFuncs::MorphToSequence(animData, toMorph, animGroupId, sequenceId);
 			}
 		}
 		// NPCs animGroupId contains 0x8000 for some reason
 		const auto actorAnimGroupId = animGroupId & 0xFFF;
-		if (auto* actorAnim = GetActorAnimation(animData->actor, actorAnimGroupId, firstPerson, animData, *toMorph ? (*toMorph)->sequenceName : nullptr))
+		if (auto* actorAnim = GetActorAnimation(animData->actor, actorAnimGroupId, firstPerson, animData, toMorph ? toMorph->sequenceName : nullptr))
 		{
-			//actorAnim->animGroup->groupID = animGroupId;
-			*toMorph = actorAnim;
+			toMorph = actorAnim;
 		}
 	}
-}
 
-__declspec(naked) void AnimationHook()
-{
-	static auto fn_AnimDataContainsAnimSequence = 0x498EA0;
-	static auto returnAddress = 0x4949D5;
-	__asm
-	{
-		push ecx
-		lea ecx, [ebp + 0x8] // BSAnimGroupSequence* toMorph
-		push ecx
-		mov edx, [ebp + 0xC] // animGroupId
-		mov ecx, [ebp - 0x5C] // animData
-		call HandleAnimationChange
-		pop ecx
-		call fn_AnimDataContainsAnimSequence
-		jmp returnAddress
-	}
+	return GameFuncs::MorphToSequence(animData, toMorph, animGroupId, sequenceId);
 }
 
 void ApplyHooks()
 {
-	WriteRelJump(0x4949D0, UInt32(AnimationHook));
+	for (UInt32 patchAddr : {0x460B69, 0x460B89, 0x45FC92, 0x45FD16})
+	{
+		WriteRelCall(patchAddr, UInt32(HandleAnimationChange));
+	}
 }

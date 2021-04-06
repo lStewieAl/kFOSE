@@ -27,9 +27,9 @@ bool Cmd_ForcePlayIdle_Execute(COMMAND_ARGS)
 	auto* idle = DYNAMIC_CAST(form, TESForm, TESIdleForm);
 	if (!idle)
 		return true;
-	SafeWrite8(0x497FA7 + 1, 1);
+	SafeWrite8(0x464A7D + 1, 1);
 	GameFuncs::PlayIdle(actor->GetAnimData(), idle, actor, idle->data.groupFlags & 0x3F, 3);
-	SafeWrite8(0x497FA7 + 1, 0);
+	SafeWrite8(0x464A7D + 1, 0);
 	*result = 1;
 	return true;
 }
@@ -78,7 +78,7 @@ std::vector<std::string> GetAnimationVariantPaths(const std::string& kfFilePath)
 	return result;
 }
 
-static ModelLoader** g_modelLoader = reinterpret_cast<ModelLoader**>(0x011C3B3C);
+static ModelLoader** g_modelLoader = reinterpret_cast<ModelLoader**>(0x106CA70);
 
 KFModel* LoadAnimation(const std::string& path, AnimData* animData)
 {
@@ -109,20 +109,6 @@ BSAnimGroupSequence* GetAnimationFromMap(AnimOverrideMap& map, UInt32 id, UInt32
 					animCustom = AnimCustom::Female;
 				else if (FindStringCI(prevPath, R"(\hurt\)"))
 					animCustom = AnimCustom::Hurt;
-			}
-			else if (auto* weaponInfo = animData->actor->baseProcess->GetWeaponInfo(); weaponInfo && weaponInfo->GetExtraData())
-			{
-				auto* xData = weaponInfo->GetExtraData();
-				auto* modFlags = static_cast<ExtraWeaponModFlags*>(xData->GetByType(kExtraData_WeaponModFlags));
-				if (modFlags && modFlags->flags)
-				{
-					if (modFlags->flags & 1 && !stacksIter->second.mod1Anims.empty())
-						animCustom = AnimCustom::Mod1;
-					if (modFlags->flags & 2 && !stacksIter->second.mod2Anims.empty())
-						animCustom = AnimCustom::Mod2;
-					if (modFlags->flags & 4 && !stacksIter->second.mod3Anims.empty())
-						animCustom = AnimCustom::Mod3;
-				}
 			}
 
 			auto& stack = stacksIter->second.Get(animCustom);
@@ -209,12 +195,6 @@ void SetOverrideAnimation(const UInt32 refId, std::string path, AnimOverrideMap&
 		animCustom = AnimCustom::Female;
 	else if (FindStringCI(path, R"(\hurt\)"))
 		animCustom = AnimCustom::Hurt;
-	else if (FindStringCI(path, R"(\mod1\)"))
-		animCustom = AnimCustom::Mod1;
-	else if (FindStringCI(path, R"(\mod2\)"))
-		animCustom = AnimCustom::Mod2;
-	else if (FindStringCI(path, R"(\mod3\)"))
-		animCustom = AnimCustom::Mod3;
 
 	auto& stack = stacks.Get(animCustom);
 	const auto findFn = [&](const SavedAnims& a)
@@ -382,17 +362,3 @@ bool Cmd_PlayAnimationPath_Execute(COMMAND_ARGS)
 	*result = 1;
 	return true;
 }
-
-//bool Cmd_GetPlayingAnimationPath_Execute(COMMAND_ARGS)
-//{
-//	int type
-//}
-
-
-// SetWeaponAnimationPath WeapNV9mmPistol 1 1 "characters\_male\idleanims\weapons\1hpAttackRight.kf"
-// SetWeaponAnimationPath WeapNVHuntingShotgun 1 1 "characters\_male\idleanims\weapons\2hrAttack7.kf"
-// SetActorAnimationPath player 0 1 "characters\_male\idleanims\sprint\Haughty.kf"
-// SetWeaponAnimationPath WeapNV9mmPistol 1 1 "characters\_male\idleanims\weapons\pistol.kf"
-
-
-

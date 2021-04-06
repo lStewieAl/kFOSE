@@ -13,7 +13,7 @@ struct SavedAnims
 
 enum class AnimCustom
 {
-	None, Male, Female, Hurt, Mod1, Mod2, Mod3
+	None, Male, Female, Hurt
 };
 
 
@@ -23,19 +23,15 @@ struct AnimStacks
 	std::vector<SavedAnims> maleAnims;
 	std::vector<SavedAnims> femaleAnims;
 	std::vector<SavedAnims> hurtAnims;
-	std::vector<SavedAnims> mod1Anims;
-	std::vector<SavedAnims> mod2Anims;
-	std::vector<SavedAnims> mod3Anims;
 
 	std::vector<SavedAnims>& Get(const AnimCustom custom)
 	{
-		switch (custom) { case AnimCustom::None: return anims;
+		switch (custom) 
+		{ 
+		case AnimCustom::None: return anims;
 		case AnimCustom::Male: return maleAnims;
 		case AnimCustom::Female: return femaleAnims;
 		case AnimCustom::Hurt: return hurtAnims;
-		case AnimCustom::Mod1: return mod1Anims;
-		case AnimCustom::Mod2: return mod2Anims;
-		case AnimCustom::Mod3: return mod3Anims;
 		default: break;
 		}
 		return anims;
@@ -73,19 +69,19 @@ enum eAnimSequence
 
 namespace GameFuncs
 {
-	inline auto* PlayIdle = reinterpret_cast<void(__thiscall*)(void*, TESIdleForm*, Actor*, int, int)>(0x497F20);
+	inline auto* PlayIdle = reinterpret_cast<void(__thiscall*)(void*, TESIdleForm*, Actor*, int, int)>(0x4649F0);
 	inline auto* ConstructAnimIdle = reinterpret_cast<void* (__thiscall*)(AnimIdle*, TESIdleForm*, eAnimSequence, int, MobileObject*, bool,
-		AnimData*)>(0x4965D0);
-	inline auto* PlayAnimation = reinterpret_cast<void(__thiscall*)(AnimData*, UInt32, int flags, int loopRange, eAnimSequence)>(0x494740);
-	inline auto* LoadKFModel = reinterpret_cast<KFModel * (__thiscall*)(ModelLoader*, const char*)>(0x4471C0);
-	inline auto* BSAnimGroupSequence_Init = reinterpret_cast<void(__thiscall*)(BSAnimGroupSequence*, TESAnimGroup*, BSAnimGroupSequence*)>(0x4EE9F0);
-	inline auto* KFModel_Init = reinterpret_cast<void(__thiscall*)(KFModel * alloc, const char* filePath, char* bsStream)>(0x43B640);
-	inline auto* GetFilePtr = reinterpret_cast<BSFile * (__cdecl*)(const char* path, int const_0, int const_negative_1, int const_1)>(0xAFDF20); // add Meshes in front!
-	inline auto* BSStream_SetFileAndName = reinterpret_cast<bool(__thiscall*)(char* bsStreamBuf, const char* fileName, BSFile*)>(0xC3A8A0);
-	inline auto* BSStream_Init = reinterpret_cast<char* (__thiscall*)(char* bsStream)>(0x43CFD0);
-	inline auto* GetAnims = reinterpret_cast<tList<char>*(__thiscall*)(TESObjectREFR*, int)>(0x566970);
-	inline auto* LoadAnimation = reinterpret_cast<bool(__thiscall*)(AnimData*, KFModel*, bool)>(0x490500);
-	inline auto* MorphToSequence = reinterpret_cast<BSAnimGroupSequence * (__thiscall*)(AnimData*, BSAnimGroupSequence*, int, int)>(0x4949A0);
+		AnimData*)>(0x460BA0);
+	inline auto* PlayAnimation = reinterpret_cast<void(__thiscall*)(AnimData*, UInt32, int flags, int loopRange, eAnimSequence)>(0x461690);
+	inline auto* LoadKFModel = reinterpret_cast<KFModel * (__thiscall*)(ModelLoader*, const char*)>(0x42CFF0);
+	inline auto* BSAnimGroupSequence_Init = reinterpret_cast<void(__thiscall*)(BSAnimGroupSequence*, TESAnimGroup*, BSAnimGroupSequence*)>(0x49D7C0);
+	inline auto* KFModel_Init = reinterpret_cast<void(__thiscall*)(KFModel * alloc, const char* filePath, char* bsStream)>(0x42BD10);
+	inline auto* GetFilePtr = reinterpret_cast<BSFile * (__cdecl*)(const char* path, int const_0, int const_negative_1, int const_1)>(0xBC7FC0); // add Meshes in front!
+	inline auto* BSStream_SetFileAndName = reinterpret_cast<bool(__thiscall*)(char* bsStreamBuf, const char* fileName, BSFile*)>(0xAA68A0);
+	inline auto* BSStream_Init = reinterpret_cast<char* (__thiscall*)(char* bsStream)>(0x424F00);
+	inline auto* GetAnims = reinterpret_cast<tList<char>*(__thiscall*)(TESObjectREFR*, int)>(0x4F76D0);
+	inline auto* LoadAnimation = reinterpret_cast<bool(__thiscall*)(AnimData*, KFModel*, bool)>(0x461A70);
+	inline auto* MorphToSequence = reinterpret_cast<BSAnimGroupSequence * (__thiscall*)(AnimData*, BSAnimGroupSequence*, int, int)>(0x45F400);
 }
 
 BSAnimGroupSequence* GetWeaponAnimation(TESObjectWEAP* weapon, UInt32 animGroupId, bool firstPerson, AnimData* animData);

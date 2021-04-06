@@ -12,19 +12,6 @@
 
 IDebugLog		gLog("kNVSE.log");
 
-PluginHandle	g_pluginHandle = kPluginHandle_Invalid;
-
-NVSEMessagingInterface* g_messagingInterface;
-NVSEInterface* g_nvseInterface;
-NVSECommandTableInterface* g_cmdTable;
-const CommandInfo* g_TFC;
-
-#if RUNTIME
-NVSEScriptInterface* g_script;
-#endif
-
-bool isEditor = false;
-
 void MessageHandler(NVSEMessagingInterface::Message* msg)
 {
 	if (msg->type == NVSEMessagingInterface::kMessage_DeferredInit)
@@ -63,10 +50,8 @@ bool NVSEPlugin_Query(const NVSEInterface* nvse, PluginInfo* info)
 			return false;
 		}
 	}
-
 	else
 	{
-		isEditor = true;
 		if (nvse->editorVersion < CS_VERSION_1_4_0_518)
 		{
 			_ERROR("incorrect editor version (got %08X need at least %08X)", nvse->editorVersion, CS_VERSION_1_4_0_518);
@@ -79,11 +64,9 @@ bool NVSEPlugin_Query(const NVSEInterface* nvse, PluginInfo* info)
 bool NVSEPlugin_Load(const NVSEInterface* nvse)
 {
 	_MESSAGE("Load");
-	g_pluginHandle = nvse->GetPluginHandle();
-	g_nvseInterface = (NVSEInterface*)nvse;
-	g_messagingInterface = (NVSEMessagingInterface*)nvse->QueryInterface(kInterface_Messaging);
-	g_messagingInterface->RegisterListener(g_pluginHandle, "NVSE", MessageHandler);
-	g_script = (NVSEScriptInterface*)nvse->QueryInterface(kInterface_Script);
+	auto pluginHandle = nvse->GetPluginHandle();
+	auto messagingInterface = (NVSEMessagingInterface*)nvse->QueryInterface(kInterface_Messaging);
+	messagingInterface->RegisterListener(pluginHandle, "NVSE", MessageHandler);
 	
 	nvse->SetOpcodeBase(0x3920);
 	
@@ -93,10 +76,10 @@ bool NVSEPlugin_Load(const NVSEInterface* nvse)
 	RegisterScriptCommand(PlayAnimationPath);
 	ApplyHooks();
 
-	if (!isEditor)
+	if (!nvse->isEditor)
 	{
-		char buf[] = { 0xEB, 0xE };
-		SafeWriteBuf(0x9EA0C8, buf, 2); // jmp 0x9EA0D8
+		// allow diagonal movement in force scripted anims
+		SafeWrite8(0x7E8B1E, 0xEB); // jmp 0x7E8B29
 	}
 	
 	return true;
