@@ -32,10 +32,28 @@ BSAnimGroupSequence* __fastcall HandleAnimationChange(AnimData* animData, void* 
 	return GameFuncs::MorphToSequence(animData, toMorph, animGroupId, sequenceId);
 }
 
+void LoadFileAnimPaths();
+bool DeferredInitHandler()
+{
+	static bool called = false;
+
+	if (called)
+	{
+		LoadFileAnimPaths();
+		SafeWriteBuf(0x6EDC35, "\xA0\x3C\x61\x07\x01", 5);
+	}
+
+	called = true;
+	return *(bool*)0x107613C;
+}
+
 void ApplyHooks()
 {
 	for (UInt32 patchAddr : {0x460B69, 0x460B89, 0x45FC92, 0x45FD16})
 	{
 		WriteRelCall(patchAddr, UInt32(HandleAnimationChange));
 	}
+
+	// add deferred init
+	WriteRelCall(0x6EDC35, UInt32(DeferredInitHandler));
 }

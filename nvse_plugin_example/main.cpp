@@ -13,14 +13,6 @@
 
 IDebugLog		gLog("kNVSE.log");
 
-void MessageHandler(NVSEMessagingInterface::Message* msg)
-{
-	if (msg->type == NVSEMessagingInterface::kMessage_DeferredInit)
-	{
-		LoadFileAnimPaths();
-	}
-}
-
 bool NVSEPlugin_Query(const NVSEInterface* nvse, PluginInfo* info)
 {
 	_MESSAGE("query");
@@ -65,10 +57,6 @@ bool NVSEPlugin_Query(const NVSEInterface* nvse, PluginInfo* info)
 bool NVSEPlugin_Load(const NVSEInterface* nvse)
 {
 	_MESSAGE("Load");
-	auto pluginHandle = nvse->GetPluginHandle();
-	auto messagingInterface = (NVSEMessagingInterface*)nvse->QueryInterface(kInterface_Messaging);
-	messagingInterface->RegisterListener(pluginHandle, "NVSE", MessageHandler);
-	
 	nvse->SetOpcodeBase(0x3920);
 	
 	RegisterScriptCommand(ForcePlayIdle);
